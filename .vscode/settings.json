@@ -1,0 +1,21 @@
+{
+    "go.testTimeout": "300s",
+    "go.testFlags": [
+        "-v"
+    ],
+    "go.lintOnSave": "package",
+    "go.formatTool": "goimports",
+    "go.useLanguageServer": true,
+    "go.buildOnSave": "package",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    "[go]": {
+        "editor.defaultFormatter": "golang.go"
+    },
+    // Using the modern debug adapter settings
+    "go.delveConfig": {
+        "apiVersion": 2
+    }
+}

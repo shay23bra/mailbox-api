@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Mailbox API",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "env": {
+                "DB_HOST": "localhost",
+                "DB_PORT": "5432",
+                "DB_USER": "postgres",
+                "DB_PASSWORD": "postgres",
+                "DB_NAME": "mailbox",
+                "DB_SSLMODE": "disable",
+                "SERVER_PORT": "8080",
+                "JWT_SECRET": "secure-jwt-secret-key-should-be-long-and-complex",
+                "TOKEN_EXPIRY": "60",
+                "LOG_LEVEL": "debug"
+            },
+            "args": [],
+            "showLog": true
+        },
+        {
+            "name": "Launch with .env file",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "envFile": "${workspaceFolder}/.env",
+            "args": [],
+            "showLog": true
+        },
+        {
+            "name": "Calculate Organization Metrics",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "envFile": "${workspaceFolder}/.env",
+            "args": [
+                "calculate-metrics"
+            ],
+            "showLog": true
+        }
+    ]
+}

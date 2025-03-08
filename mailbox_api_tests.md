@@ -23,6 +23,36 @@ echo "CTO Token: $CTO_TOKEN"
 ```
 
 
+## Organization Metrics Calculation
+
+Must run metrics calculation for org depth and sub org size
+
+### CEO Calculating Metrics (Allowed)
+
+```bash
+curl -X POST -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes/calculate-metrics"
+```
+
+**Response:**
+```json
+{
+  "message": "Org metrics calculated successfully"
+}
+```
+
+### CTO Attempting to Calculate Metrics (Denied)
+
+```bash
+curl -X POST -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes/calculate-metrics"
+```
+
+**Response:**
+```json
+{
+  "error": "Access denied"
+}
+```
+
 ## Listing Mailboxes
 
 ### CEO Access (All Mailboxes)
@@ -44,8 +74,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 2,
       "department": "Technology",
       "manager_mailbox_identifier": "bob.smith@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 3,
+      "sub_org_size": 1
     },
     {
       "mailbox_identifier": "bob.smith@falafel.org",
@@ -54,8 +84,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 2,
       "department": "Technology",
       "manager_mailbox_identifier": "david.brown@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 2,
+      "sub_org_size": 3
     },
     {
       "mailbox_identifier": "carol.green@falafel.org",
@@ -64,7 +94,7 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 3,
       "department": "Marketing",
       "manager_mailbox_identifier": "emma.davis@falafel.org",
-      "org_depth": 0,
+      "org_depth": 2,
       "sub_org_size": 0
     },
     {
@@ -74,8 +104,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 4,
       "department": "Human Resources",
       "manager_mailbox_identifier": "isabella.white@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 1,
+      "sub_org_size": 1
     },
     {
       "mailbox_identifier": "david.brown@falafel.org",
@@ -84,8 +114,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 2,
       "department": "Technology",
       "manager_mailbox_identifier": "isabella.white@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 1,
+      "sub_org_size": 5
     },
     {
       "mailbox_identifier": "emma.davis@falafel.org",
@@ -94,8 +124,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 3,
       "department": "Marketing",
       "manager_mailbox_identifier": "isabella.white@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 1,
+      "sub_org_size": 2
     },
     {
       "mailbox_identifier": "frank.wilson@falafel.org",
@@ -104,8 +134,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 5,
       "department": "Sales",
       "manager_mailbox_identifier": "isabella.white@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 1,
+      "sub_org_size": 1
     },
     {
       "mailbox_identifier": "grace.miller@falafel.org",
@@ -114,7 +144,7 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 3,
       "department": "Marketing",
       "manager_mailbox_identifier": "emma.davis@falafel.org",
-      "org_depth": 0,
+      "org_depth": 2,
       "sub_org_size": 0
     },
     {
@@ -124,8 +154,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 6,
       "department": "Finance",
       "manager_mailbox_identifier": "isabella.white@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 1,
+      "sub_org_size": 1
     },
     {
       "mailbox_identifier": "isabella.white@falafel.org",
@@ -135,7 +165,7 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department": "Executive",
       "manager_mailbox_identifier": "",
       "org_depth": 0,
-      "sub_org_size": 0
+      "sub_org_size": 15
     }
   ],
   "pagination": {
@@ -160,23 +190,33 @@ curl -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes"
 {
   "data": [
     {
-      "mailbox_identifier": "steve.johnson@falafel.org",
-      "user_full_name": "Steve Johnson",
-      "job_title": "Product Manager",
-      "department_id": 2,
-      "department": "Technology",
-      "manager_mailbox_identifier": "david.brown@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
-    },
-    {
       "mailbox_identifier": "bob.smith@falafel.org",
       "user_full_name": "Bob Smith",
       "job_title": "Project Manager",
       "department_id": 2,
       "department": "Technology",
       "manager_mailbox_identifier": "david.brown@falafel.org",
-      "org_depth": 0,
+      "org_depth": 2,
+      "sub_org_size": 3
+    },
+    {
+      "mailbox_identifier": "alice.johnson@falafel.org",
+      "user_full_name": "Alice Johnson",
+      "job_title": "Software Engineer",
+      "department_id": 2,
+      "department": "Technology",
+      "manager_mailbox_identifier": "bob.smith@falafel.org",
+      "org_depth": 3,
+      "sub_org_size": 1
+    },
+    {
+      "mailbox_identifier": "paul.martin@falafel.org",
+      "user_full_name": "Paul Martin",
+      "job_title": "Software Engineer",
+      "department_id": 2,
+      "department": "Technology",
+      "manager_mailbox_identifier": "alice.johnson@falafel.org",
+      "org_depth": 4,
       "sub_org_size": 0
     },
     {
@@ -186,27 +226,17 @@ curl -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes"
       "department_id": 2,
       "department": "Technology",
       "manager_mailbox_identifier": "bob.smith@falafel.org",
-      "org_depth": 0,
+      "org_depth": 3,
       "sub_org_size": 0
     },
     {
-      "mailbox_identifier": "alice.johnson@falafel.org",
-      "user_full_name": "Alice Johnson",
-      "job_title": "Software Engineer",
+      "mailbox_identifier": "steve.johnson@falafel.org",
+      "user_full_name": "Steve Johnson",
+      "job_title": "Product Manager",
       "department_id": 2,
       "department": "Technology",
-      "manager_mailbox_identifier": "bob.smith@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
-    },
-    {
-      "mailbox_identifier": "paul.martin@falafel.org",
-      "user_full_name": "Paul Martin",
-      "job_title": "Software Engineer",
-      "department_id": 2,
-      "department": "Technology",
-      "manager_mailbox_identifier": "alice.johnson@falafel.org",
-      "org_depth": 0,
+      "manager_mailbox_identifier": "david.brown@falafel.org",
+      "org_depth": 2,
       "sub_org_size": 0
     }
   ],
@@ -232,61 +262,21 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes?
 {
   "data": [
     {
-      "mailbox_identifier": "alice.johnson@falafel.org",
-      "user_full_name": "Alice Johnson",
-      "job_title": "Software Engineer",
-      "department_id": 2,
-      "department": "Technology",
-      "manager_mailbox_identifier": "bob.smith@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
-    },
-    {
-      "mailbox_identifier": "bob.smith@falafel.org",
-      "user_full_name": "Bob Smith",
-      "job_title": "Project Manager",
-      "department_id": 2,
-      "department": "Technology",
-      "manager_mailbox_identifier": "david.brown@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
-    },
-    {
       "mailbox_identifier": "david.brown@falafel.org",
       "user_full_name": "David Brown",
       "job_title": "CTO",
       "department_id": 2,
       "department": "Technology",
       "manager_mailbox_identifier": "isabella.white@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
-    },
-    {
-      "mailbox_identifier": "lisa.evans@falafel.org",
-      "user_full_name": "Lisa Evans",
-      "job_title": "Senior Software Engineer",
-      "department_id": 2,
-      "department": "Technology",
-      "manager_mailbox_identifier": "bob.smith@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
-    },
-    {
-      "mailbox_identifier": "paul.martin@falafel.org",
-      "user_full_name": "Paul Martin",
-      "job_title": "Software Engineer",
-      "department_id": 2,
-      "department": "Technology",
-      "manager_mailbox_identifier": "alice.johnson@falafel.org",
-      "org_depth": 0,
-      "sub_org_size": 0
+      "org_depth": 1,
+      "sub_org_size": 5
     }
   ],
   "pagination": {
     "page": 1,
     "page_size": 5,
-    "total_items": 6,
-    "total_pages": 2
+    "total_items": 1,
+    "total_pages": 1
   }
 }
 ```
@@ -380,8 +370,8 @@ curl -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes/
   "department_id": 2,
   "department": "Technology",
   "manager_mailbox_identifier": "isabella.white@falafel.org",
-  "org_depth": 0,
-  "sub_org_size": 0
+  "org_depth": 1,
+  "sub_org_size": 5
 }
 ```
 
@@ -400,8 +390,8 @@ curl -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes/
   "department_id": 2,
   "department": "Technology",
   "manager_mailbox_identifier": "isabella.white@falafel.org",
-  "org_depth": 0,
-  "sub_org_size": 0
+  "org_depth": 1,
+  "sub_org_size": 5
 }
 ```
 
@@ -420,8 +410,8 @@ curl -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes/
   "department_id": 2,
   "department": "Technology",
   "manager_mailbox_identifier": "david.brown@falafel.org",
-  "org_depth": 0,
-  "sub_org_size": 0
+  "org_depth": 2,
+  "sub_org_size": 3
 }
 ```
 
@@ -431,34 +421,6 @@ CTO attempts to access the Marketing Lead's mailbox, which is outside their sub-
 
 ```bash
 curl -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes/emma.davis@falafel.org"
-```
-
-**Response:**
-```json
-{
-  "error": "Access denied"
-}
-```
-
-## Organization Metrics Calculation
-
-### CEO Calculating Metrics (Allowed)
-
-```bash
-curl -X POST -H "Authorization: Bearer $CEO_TOKEN" "http://localhost:8080/api/mailboxes/calculate-metrics"
-```
-
-**Response:**
-```json
-{
-  "message": "Org metrics calculated successfully"
-}
-```
-
-### CTO Attempting to Calculate Metrics (Denied)
-
-```bash
-curl -X POST -H "Authorization: Bearer $CTO_TOKEN" "http://localhost:8080/api/mailboxes/calculate-metrics"
 ```
 
 **Response:**

@@ -174,7 +174,7 @@ This ensures tests are isolated and reproducible.
 
 - `GET /api/mailboxes` - List mailboxes (CEO sees all, CTO sees only their sub-organization)
 - `GET /api/mailboxes/:id` - Get a specific mailbox (CEO can access any, CTO can only access those in their sub-organization)
-- `POST /api/mailboxes/calculate-metrics` - Recalculate organization metrics (CEO only)
+- `POST /api/mailboxes/calculate-metrics` - Recalculate organization metrics (CEO only), must run metrics calculation for org depth and sub org size
 
 ### Query Parameters
 

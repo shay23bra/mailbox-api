@@ -12,7 +12,7 @@ A REST API for managing mailboxes in an organization and providing organizationa
 
 ## Prerequisites
 
-- Go 1.16 or higher
+- Go 1.21 or higher
 - PostgreSQL 12 or higher
 - Docker and Docker Compose (optional)
 

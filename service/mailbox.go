@@ -14,7 +14,7 @@ type MailboxService interface {
 	GetMailboxes(ctx context.Context, filter model.MailboxFilter) (*model.MailboxResponse, error)
 	GetMailboxByIdentifier(ctx context.Context, identifier string) (*model.Mailbox, error)
 	CalculateOrgMetrics(ctx context.Context) error
-	GetMailboxesInSubOrg(ctx context.Context, managerIdentifier string, filter model.MailboxFilter) (*model.MailboxResponse, error)
+	GetMailboxesInSubOrg(ctx context.Context, role string, filter model.MailboxFilter) (*model.MailboxResponse, error)
 	IsMailboxInSubOrg(ctx context.Context, managerIdentifier string, mailboxIdentifier string) (bool, error)
 	ImportMailboxesFromCSV(ctx context.Context, csvData string) error
 	ImportDepartmentsFromCSV(ctx context.Context, csvData string) error
@@ -71,6 +71,15 @@ func (s *mailboxService) GetMailboxByIdentifier(ctx context.Context, identifier 
 	return mailbox, nil
 }
 
+func (s *mailboxService) GetMailboxesByRole(ctx context.Context, role string) ([]model.Mailbox, error) {
+	mailboxes, err := s.mailboxRepo.GetMailboxesByRole(ctx, role)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get mailboxes by role: %w", err)
+	}
+
+	return mailboxes, nil
+}
+
 func (s *mailboxService) CalculateOrgMetrics(ctx context.Context) error {
 	if err := s.mailboxRepo.CalculateOrgMetrics(ctx); err != nil {
 		return fmt.Errorf("failed to calculate org metrics: %w", err)
@@ -78,14 +87,14 @@ func (s *mailboxService) CalculateOrgMetrics(ctx context.Context) error {
 	return nil
 }
 
-func (s *mailboxService) GetMailboxesInSubOrg(ctx context.Context, managerIdentifier string, filter model.MailboxFilter) (*model.MailboxResponse, error) {
-	manager, err := s.GetMailboxByIdentifier(ctx, managerIdentifier)
+func (s *mailboxService) GetMailboxesInSubOrg(ctx context.Context, role string, filter model.MailboxFilter) (*model.MailboxResponse, error) {
+	mailboxesByRole, err := s.GetMailboxesByRole(ctx, role)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get manager: %w", err)
 	}
 
-	if manager == nil {
-		return nil, fmt.Errorf("manager not found: %s", managerIdentifier)
+	if len(mailboxesByRole) == 0 {
+		return nil, fmt.Errorf("manager not found: %s", role)
 	}
 
 	allMailboxes, err := s.mailboxRepo.GetAllMailboxes(ctx)
@@ -99,7 +108,7 @@ func (s *mailboxService) GetMailboxesInSubOrg(ctx context.Context, managerIdenti
 	}
 
 	subOrgMailboxes := []model.Mailbox{}
-	findSubOrg(manager.Identifier, mailboxMap, &subOrgMailboxes)
+	findSubOrg(mailboxesByRole[0].Identifier, mailboxMap, &subOrgMailboxes)
 
 	filteredMailboxes := []model.Mailbox{}
 	for _, mailbox := range subOrgMailboxes {

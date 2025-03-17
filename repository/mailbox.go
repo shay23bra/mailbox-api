@@ -16,6 +16,7 @@ import (
 type MailboxRepository interface {
 	GetMailboxes(ctx context.Context, filter model.MailboxFilter) ([]model.Mailbox, int, error)
 	GetMailboxByIdentifier(ctx context.Context, identifier string) (*model.Mailbox, error)
+	GetMailboxesByRole(ctx context.Context, role string) ([]model.Mailbox, error)
 	GetAllMailboxes(ctx context.Context) ([]model.Mailbox, error)
 	CreateMailbox(ctx context.Context, mailbox model.Mailbox) error
 	UpdateOrgDepth(ctx context.Context, identifier string, depth int) error
@@ -256,6 +257,64 @@ func (r *mailboxRepository) GetMailboxByIdentifier(ctx context.Context, identifi
 	}
 
 	return &mailbox, nil
+}
+
+func (r *mailboxRepository) GetMailboxesByRole(ctx context.Context, role string) ([]model.Mailbox, error) {
+	query := `
+	SELECT 
+		m.mailbox_identifier, 
+		m.user_full_name, 
+		m.job_title, 
+		m.department_id, 
+		d.department_name, 
+		m.manager_mailbox_identifier, 
+		m.org_depth, 
+		m.sub_org_size
+	FROM 
+		mailboxes m
+	JOIN 
+		departments d ON m.department_id = d.department_id
+	WHERE 
+		m.job_title ILIKE $1`
+
+	rows, err := r.db.Query(ctx, query, role)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query mailboxes by role: %w", err)
+	}
+	defer rows.Close()
+
+	mailboxes := []model.Mailbox{}
+	for rows.Next() {
+		var mailbox model.Mailbox
+		var managerId sql.NullString // Use sql.NullString to handle NULL values
+		err := rows.Scan(
+			&mailbox.Identifier,
+			&mailbox.UserFullName,
+			&mailbox.JobTitle,
+			&mailbox.DepartmentID,
+			&mailbox.Department,
+			&managerId, // Scan into NullString
+			&mailbox.OrgDepth,
+			&mailbox.SubOrgSize,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan mailbox: %w", err)
+		}
+
+		// Convert NullString to string
+		if managerId.Valid {
+			mailbox.ManagerIdentifier = managerId.String
+		} else {
+			mailbox.ManagerIdentifier = "" // Empty string for NULL
+		}
+		mailboxes = append(mailboxes, mailbox)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating over mailboxes: %w", err)
+	}
+
+	return mailboxes, nil
 }
 
 func (r *mailboxRepository) GetAllMailboxes(ctx context.Context) ([]model.Mailbox, error) {

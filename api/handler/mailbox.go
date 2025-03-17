@@ -46,8 +46,7 @@ func (h *MailboxHandler) GetMailboxes(c *gin.Context) {
 	if userRole == middleware.RoleCEO {
 		response, err = h.service.GetMailboxes(c.Request.Context(), filter)
 	} else if userRole == middleware.RoleCTO {
-		ctoIdentifier := "david.brown@falafel.org"
-		response, err = h.service.GetMailboxesInSubOrg(c.Request.Context(), ctoIdentifier, filter)
+		response, err = h.service.GetMailboxesInSubOrg(c.Request.Context(), string(userRole), filter)
 	} else {
 		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied"})
 		return

@@ -9,7 +9,7 @@
     "go.buildOnSave": "package",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": true
+        "source.organizeImports": "explicit"
     },
     "[go]": {
         "editor.defaultFormatter": "golang.go"
